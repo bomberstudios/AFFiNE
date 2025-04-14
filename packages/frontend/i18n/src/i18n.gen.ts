@@ -8442,6 +8442,13 @@ export function useAFFiNEI18N(): {
       */
     ["error.COPILOT_PROMPT_INVALID"](): string;
     /**
+      * `Copilot provider {{provider}} is not supported output type {{kind}}`
+      */
+    ["error.COPILOT_PROVIDER_NOT_SUPPORTED"](options: Readonly<{
+        provider: string;
+        kind: string;
+    }>): string;
+    /**
       * `Provider {{provider}} failed with {{kind}} error: {{message}}`
       */
     ["error.COPILOT_PROVIDER_SIDE_ERROR"](options: Readonly<{
