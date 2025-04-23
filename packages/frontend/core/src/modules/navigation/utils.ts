@@ -74,20 +74,20 @@ export const resolveRouteLinkMeta = (
   }
 };
 
-export const isLink = (href: string) => {
+export const isLink = (url: string) => {
   try {
-    const hasScheme = href.match(/^https?:\/\//);
+    const hasScheme = url.match(/^https?:\/\//);
 
     if (!hasScheme) {
-      const dotIdx = href.indexOf('.');
-      if (dotIdx > 0 && dotIdx < href.length - 1) {
-        href = `https://${href}`;
+      const dotIdx = url.indexOf('.');
+      if (dotIdx > 0 && dotIdx < url.length - 1) {
+        url = `https://${url}`;
       }
     }
 
-    return Boolean(URL.canParse?.(href) ?? new URL(href));
+    return Boolean(URL.canParse?.(url) ?? new URL(url));
   } catch {
-    return null;
+    return false;
   }
 };
 
