@@ -6833,6 +6833,26 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.workspace.cloud.account.admin"](): string;
     /**
+      * `Team owner`
+      */
+    ["com.affine.workspace.cloud.account.team.owner"](): string;
+    /**
+      * `Team member`
+      */
+    ["com.affine.workspace.cloud.account.team.member"](): string;
+    /**
+      * `Multiple teams`
+      */
+    ["com.affine.workspace.cloud.account.team.multi"](): string;
+    /**
+      * `Click to open workspace`
+      */
+    ["com.affine.workspace.cloud.account.team.tips-1"](): string;
+    /**
+      * `Click to open workspace list`
+      */
+    ["com.affine.workspace.cloud.account.team.tips-2"](): string;
+    /**
       * `Sign up/ Sign in`
       */
     ["com.affine.workspace.cloud.auth"](): string;

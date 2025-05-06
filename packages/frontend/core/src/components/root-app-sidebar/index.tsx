@@ -50,7 +50,7 @@ import { SidebarAudioPlayer } from './sidebar-audio-player';
 import { TemplateDocEntrance } from './template-doc-entrance';
 import { TrashButton } from './trash-button';
 import { UpdaterButton } from './updater-button';
-import { UserInfo } from './user-info';
+import UserInfo from './user-info';
 
 export type RootAppSidebarProps = {
   isPublicWorkspace: boolean;
