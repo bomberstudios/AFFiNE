@@ -21,12 +21,12 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import type { UserType } from '../schema';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
-import { useUserCount } from './use-user-management';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pagination: PaginationState;
+  usersCount: number;
   selectedUsers: UserType[];
   setMemoUsers: Dispatch<SetStateAction<UserType[]>>;
   onPaginationChange: Dispatch<
@@ -41,12 +41,11 @@ export function DataTable<TData extends { id: string }, TValue>({
   columns,
   data,
   pagination,
+  usersCount,
   selectedUsers,
   setMemoUsers,
   onPaginationChange,
 }: DataTableProps<TData, TValue>) {
-  const usersCount = useUserCount();
-
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 

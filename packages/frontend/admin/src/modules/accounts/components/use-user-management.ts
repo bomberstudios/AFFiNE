@@ -2,7 +2,6 @@ import {
   useMutateQueryResource,
   useMutation,
 } from '@affine/admin/use-mutation';
-import { useQuery } from '@affine/admin/use-query';
 import { useAsyncCallback } from '@affine/core/components/hooks/affine-async-hooks';
 import {
   createChangePasswordUrlMutation,
@@ -10,7 +9,6 @@ import {
   deleteUserMutation,
   disableUserMutation,
   enableUserMutation,
-  getUsersCountQuery,
   type ImportUsersInput,
   type ImportUsersMutation,
   importUsersMutation,
@@ -61,7 +59,6 @@ export const useCreateUser = () => {
           features,
         });
         await revalidate(listUsersQuery);
-        await revalidate(getUsersCountQuery);
         toast('Account updated successfully');
       } catch (e) {
         toast.error('Failed to update account: ' + (e as Error).message);
@@ -163,7 +160,6 @@ export const useDeleteUser = () => {
       await deleteUserById({ id })
         .then(async () => {
           await revalidate(listUsersQuery);
-          await revalidate(getUsersCountQuery);
           toast('User deleted successfully');
           callback?.();
         })
@@ -226,15 +222,6 @@ export const useDisableUser = () => {
   return disableById;
 };
 
-export const useUserCount = () => {
-  const {
-    data: { usersCount },
-  } = useQuery({
-    query: getUsersCountQuery,
-  });
-  return usersCount;
-};
-
 export const useImportUsers = () => {
   const { trigger: importUsers } = useMutation({
     mutation: importUsersMutation,
@@ -249,7 +236,6 @@ export const useImportUsers = () => {
       await importUsers({ input })
         .then(async ({ importUsers }) => {
           await revalidate(listUsersQuery);
-          await revalidate(getUsersCountQuery);
           callback?.(importUsers);
         })
         .catch(e => {

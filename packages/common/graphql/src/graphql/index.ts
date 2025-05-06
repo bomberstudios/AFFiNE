@@ -176,14 +176,6 @@ export const getUserByEmailQuery = {
 }`,
 };
 
-export const getUsersCountQuery = {
-  id: 'getUsersCountQuery' as const,
-  op: 'getUsersCount',
-  query: `query getUsersCount {
-  usersCount
-}`,
-};
-
 export const importUsersMutation = {
   id: 'importUsersMutation' as const,
   op: 'ImportUsers',
@@ -217,6 +209,7 @@ export const listUsersQuery = {
     emailVerified
     avatarUrl
   }
+  usersCount
 }`,
 };
 
