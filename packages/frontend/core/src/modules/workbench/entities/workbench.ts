@@ -21,6 +21,7 @@ export type WorkbenchOpenOptions = {
 
 const sidebarOpenKey = 'workbenchSidebarOpen';
 const sidebarWidthKey = 'workbenchSidebarWidth';
+const workspaceSelectorOpenKey = 'workspaceSelectorOpen';
 
 export class Workbench extends Entity {
   constructor(
@@ -70,6 +71,14 @@ export class Workbench extends Entity {
     this.globalState.set(sidebarWidthKey, width);
   }
 
+  workspaceSelectorOpen$ = LiveData.from(
+    this.globalState.watch<boolean>(workspaceSelectorOpenKey),
+    false
+  );
+  setWorkspaceSelectorOpen(open: boolean) {
+    this.globalState.set(workspaceSelectorOpenKey, open);
+  }
+
   active(index: number | View) {
     if (typeof index === 'number') {
       index = Math.max(0, Math.min(index, this.views$.value.length - 1));
@@ -112,6 +121,18 @@ export class Workbench extends Entity {
 
   toggleSidebar() {
     this.setSidebarOpen(!this.sidebarOpen$.value);
+  }
+
+  openWorkspaceSelector() {
+    this.setWorkspaceSelectorOpen(true);
+  }
+
+  closeWorkspaceSelector() {
+    this.setWorkspaceSelectorOpen(false);
+  }
+
+  toggleWorkspaceSelector() {
+    this.setWorkspaceSelectorOpen(!this.workspaceSelectorOpen$.value);
   }
 
   open(to: To, option: WorkbenchOpenOptions = {}) {

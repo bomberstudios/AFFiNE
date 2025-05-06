@@ -19,6 +19,7 @@ import { WorkspaceCard } from './workspace-card';
 
 interface WorkspaceSelectorProps {
   open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   workspaceMetadata?: WorkspaceMetadata;
   onSelectWorkspace?: (workspaceMetadata: WorkspaceMetadata) => void;
   onCreatedWorkspace?: (payload: {
@@ -40,6 +41,7 @@ export const WorkspaceSelector = ({
   showArrowDownIcon,
   disable,
   open: outerOpen,
+  onOpenChange: outerOnOpenChange,
   showEnableCloudButton,
   showSyncStatus,
   className,
@@ -51,13 +53,29 @@ export const WorkspaceSelector = ({
   });
   const [innerOpen, setOpened] = useState(false);
   const open = outerOpen ?? innerOpen;
+  const onOpenChange = useCallback(
+    (open: boolean) => {
+      outerOnOpenChange !== undefined
+        ? outerOnOpenChange?.(open)
+        : setOpened(open);
+    },
+    [outerOnOpenChange]
+  );
   const closeUserWorkspaceList = useCallback(() => {
-    setOpened(false);
-  }, []);
+    if (outerOnOpenChange) {
+      outerOnOpenChange(false);
+    } else {
+      setOpened(false);
+    }
+  }, [outerOnOpenChange]);
   const openUserWorkspaceList = useCallback(() => {
     track.$.navigationPanel.workspaceList.open();
-    setOpened(true);
-  }, []);
+    if (outerOnOpenChange) {
+      outerOnOpenChange(true);
+    } else {
+      setOpened(true);
+    }
+  }, [outerOnOpenChange]);
 
   const currentWorkspaceId = useLiveData(
     globalContextService.globalContext.workspaceId.$
@@ -80,6 +98,7 @@ export const WorkspaceSelector = ({
     <Menu
       rootOptions={{
         open,
+        onOpenChange,
       }}
       items={
         <UserWithWorkspaceList
