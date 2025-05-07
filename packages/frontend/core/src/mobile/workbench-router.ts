@@ -1,4 +1,4 @@
-import type { RouteObject } from 'react-router-dom';
+import type { RouteObject } from 'react-router';
 
 import { Component as All } from './pages/workspace/all';
 import { Component as Collection } from './pages/workspace/collection';

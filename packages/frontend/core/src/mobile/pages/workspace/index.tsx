@@ -17,7 +17,7 @@ import {
   type RouteObject,
   useLocation,
   useParams,
-} from 'react-router-dom';
+} from 'react-router';
 
 import { WorkspaceLayout } from './layout';
 import { MobileWorkbenchRoot } from './workbench-root';
@@ -43,11 +43,19 @@ const warpedRoutes = workbenchRoutes.map((originalRoute: RouteObject) => {
 
   const { path, lazy } = originalRoute;
 
-  const Component = reactLazy(() =>
-    lazy().then(m => ({
-      default: m.Component as React.ComponentType,
-    }))
-  );
+  const Component = reactLazy(async () => {
+    if (typeof lazy === 'object' && 'import' in lazy) {
+      const m = await (lazy.import as () => Promise<any>)();
+      return {
+        default: m.Component as React.ComponentType,
+      };
+    } else {
+      const m_1 = await Promise.resolve(lazy as unknown as Promise<any>);
+      return {
+        default: m_1.Component as React.ComponentType,
+      };
+    }
+  });
   const route = {
     Component,
   };

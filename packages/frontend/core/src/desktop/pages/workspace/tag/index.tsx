@@ -16,7 +16,7 @@ import {
 import { WorkspaceService } from '@affine/core/modules/workspace';
 import { useLiveData, useService } from '@toeverything/infra';
 import { useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 
 import { PageNotFound } from '../../404';
 import { AllDocSidebarTabs } from '../layouts/all-doc-sidebar-tabs';

@@ -1,11 +1,11 @@
-import { wrapCreateBrowserRouterV6 } from '@sentry/react';
+import { wrapCreateBrowserRouterV7 } from '@sentry/react';
 import { useEffect, useState } from 'react';
-import type { RouteObject } from 'react-router-dom';
+import type { RouteObject } from 'react-router';
 import {
   createBrowserRouter as reactRouterCreateBrowserRouter,
   redirect,
   useNavigate,
-} from 'react-router-dom';
+} from 'react-router';
 
 import { AffineErrorComponent } from '../components/affine/affine-error-boundary/affine-error-fallback';
 import { NavigateContext } from '../components/hooks/use-navigate-helper';
@@ -182,14 +182,11 @@ export const topLevelRoutes = [
   },
 ] satisfies [RouteObject, ...RouteObject[]];
 
-const createBrowserRouter = wrapCreateBrowserRouterV6(
+const createBrowserRouter = wrapCreateBrowserRouterV7(
   reactRouterCreateBrowserRouter
 );
 export const router = (
   window.SENTRY_RELEASE ? createBrowserRouter : reactRouterCreateBrowserRouter
 )(topLevelRoutes, {
   basename: environment.subPath,
-  future: {
-    v7_normalizeFormMethod: true,
-  },
 });

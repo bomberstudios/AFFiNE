@@ -213,7 +213,7 @@ const CloudWorkSpaceList = ({
     if (currentWorkspaceFlavour === server.id) {
       const otherWorkspace = workspaces.find(w => w.flavour !== server.id);
       if (otherWorkspace) {
-        navigateHelper.openPage(otherWorkspace.id, 'all');
+        navigateHelper.jumpToAll(otherWorkspace.id);
       }
     }
   }, [
