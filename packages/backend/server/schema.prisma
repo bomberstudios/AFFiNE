@@ -106,6 +106,8 @@ model VerificationToken {
 }
 
 model Workspace {
+  // NOTE: manually set this column type to identity in migration file
+  sid                Int      @unique @default(autoincrement())
   id                 String   @id @default(uuid()) @db.VarChar
   public             Boolean
   createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -115,6 +117,7 @@ model Workspace {
   enableDocEmbedding Boolean  @default(true) @map("enable_doc_embedding")
   name               String?  @db.VarChar
   avatarKey          String?  @map("avatar_key") @db.VarChar
+  indexed            Boolean  @default(false)
 
   features       WorkspaceFeature[]
   docs           WorkspaceDoc[]

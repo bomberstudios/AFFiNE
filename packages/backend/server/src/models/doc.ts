@@ -171,15 +171,20 @@ export class DocModel extends BaseModel {
     };
   }
 
-  async getSnapshot(workspaceId: string, docId: string) {
-    return await this.db.snapshot.findUnique({
+  async getSnapshot<Select extends Prisma.SnapshotSelect>(
+    workspaceId: string,
+    docId: string,
+    options?: { select?: Select }
+  ) {
+    return (await this.db.snapshot.findUnique({
       where: {
         workspaceId_id: {
           workspaceId,
           id: docId,
         },
       },
-    });
+      select: options?.select,
+    })) as Prisma.SnapshotGetPayload<{ select: Select }> | null;
   }
 
   async getAuthors(workspaceId: string, docId: string) {

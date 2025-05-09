@@ -11,6 +11,7 @@ export type MockDocSnapshotInput = {
   workspaceId: string;
   docId?: string;
   blob?: Uint8Array;
+  updatedAt?: Date;
 };
 
 export type MockedDocSnapshot = Snapshot;
@@ -32,7 +33,7 @@ export class MockDocSnapshot extends Mocker<
         workspaceId: input.workspaceId,
         blob: input.blob,
         createdAt: new Date(),
-        updatedAt: new Date(),
+        updatedAt: input.updatedAt ?? new Date(),
         createdBy: input.user.id,
         updatedBy: input.user.id,
       },

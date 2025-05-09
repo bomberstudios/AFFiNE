@@ -22,6 +22,7 @@ export type UpdateWorkspaceInput = Pick<
   | 'enableDocEmbedding'
   | 'name'
   | 'avatarKey'
+  | 'indexed'
 >;
 
 @Injectable()
@@ -54,7 +55,7 @@ export class WorkspaceModel extends BaseModel {
       },
       data,
     });
-    this.logger.log(
+    this.logger.debug(
       `Updated workspace ${workspaceId} with data ${JSON.stringify(data)}`
     );
     return workspace;
@@ -72,6 +73,18 @@ export class WorkspaceModel extends BaseModel {
     return await this.db.workspace.findMany({
       where: {
         id: { in: ids },
+      },
+    });
+  }
+
+  async listAfterSid(sid: number, limit: number) {
+    return await this.db.workspace.findMany({
+      where: {
+        sid: { gt: sid },
+      },
+      take: limit,
+      orderBy: {
+        sid: 'asc',
       },
     });
   }

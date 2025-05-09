@@ -161,7 +161,12 @@ export class JobExecutor implements OnModuleDestroy {
   async handleJobReturn(job: Job, result: JOB_SIGNAL) {
     if (result === JOB_SIGNAL.Repeat || result === JOB_SIGNAL.Retry) {
       try {
-        await this.getQueue(job.name).add(job.name, job.data, job.opts);
+        await this.getQueue(namespace(job.name as JobName)).add(
+          job.name,
+          job.data,
+          job.opts
+        );
+        this.logger.debug(`Added job [${job.name}] to queue, signal=${result}`);
       } catch (e) {
         this.logger.error(`Failed to add job [${job.name}]`, e);
       }
