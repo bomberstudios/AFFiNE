@@ -474,12 +474,21 @@ class CloudWorkspaceFlavourProvider implements WorkspaceFlavourProvider {
             id: `${this.flavour}:${workspaceId}`,
           },
         },
+        // indexer: {
+        //   name: 'IndexedDBIndexerStorage',
+        //   opts: {
+        //     flavour: this.flavour,
+        //     type: 'workspace',
+        //     id: workspaceId,
+        //   },
+        // },
         indexer: {
-          name: 'IndexedDBIndexerStorage',
+          name: 'CloudIndexerStorage',
           opts: {
             flavour: this.flavour,
             type: 'workspace',
             id: workspaceId,
+            serverBaseUrl: this.server.serverMetadata.baseUrl,
           },
         },
         indexerSync: {
