@@ -105,6 +105,9 @@ export const PageListHeader = () => {
     </div>
   );
 };
+/**
+ * @deprecated
+ */
 export const CollectionPageListHeader = ({
   collection,
   workspaceId,

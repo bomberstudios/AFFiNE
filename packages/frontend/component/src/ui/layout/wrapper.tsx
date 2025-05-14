@@ -46,6 +46,8 @@ export const Wrapper = styled('div', {
       'marginLeft',
       'marginRight',
       'marginBottom',
+      'flexGrow',
+      'flexShrink',
     ].includes(prop as string);
   },
 })<WrapperProps>(({

@@ -124,11 +124,16 @@ export const DocListItem = ({ ...props }: DocListItemProps) => {
           // do multi select
           handleMultiSelect(prevCheckAnchorId, currCursor);
         } else {
-          contextValue.selectedDocIds$?.next([docId]);
+          contextValue.selectedDocIds$?.next(
+            contextValue.selectedDocIds$.value.includes(docId)
+              ? contextValue.selectedDocIds$.value.filter(id => id !== docId)
+              : [...contextValue.selectedDocIds$.value, docId]
+          );
           contextValue.prevCheckAnchorId$?.next(currCursor);
         }
       } else {
         if (e.shiftKey) {
+          contextValue.selectMode$?.next(true);
           contextValue.selectedDocIds$?.next([docId]);
           contextValue.prevCheckAnchorId$?.next(currCursor);
           return;

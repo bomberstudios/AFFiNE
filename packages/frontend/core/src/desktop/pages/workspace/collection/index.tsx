@@ -1,10 +1,15 @@
+import { FlexWrapper } from '@affine/component';
 import { EmptyCollectionDetail } from '@affine/core/components/affine/empty/collection-detail';
-import { VirtualizedPageList } from '@affine/core/components/page-list';
+import {
+  createDocExplorerContext,
+  DocExplorerContext,
+} from '@affine/core/components/explorer/context';
+import { DocsList } from '@affine/core/components/explorer/docs-view/docs-list';
 import {
   type Collection,
   CollectionService,
 } from '@affine/core/modules/collection';
-import { WorkspaceDialogService } from '@affine/core/modules/dialogs';
+import { CollectionRulesService } from '@affine/core/modules/collection-rules';
 import { GlobalContextService } from '@affine/core/modules/global-context';
 import { WorkspacePermissionService } from '@affine/core/modules/permissions';
 import { WorkspaceService } from '@affine/core/modules/workspace';
@@ -25,42 +30,82 @@ import {
 import { PageNotFound } from '../../404';
 import { AllDocSidebarTabs } from '../layouts/all-doc-sidebar-tabs';
 import { CollectionDetailHeader } from './header';
+import * as styles from './index.css';
+import { CollectionListHeader } from './list-header';
 
 export const CollectionDetail = ({
   collection,
 }: {
   collection: Collection;
 }) => {
-  const { workspaceDialogService } = useServices({
-    WorkspaceDialogService,
-  });
+  const [explorerContextValue] = useState(createDocExplorerContext);
+  const collectionRulesService = useService(CollectionRulesService);
+
   const permissionService = useService(WorkspacePermissionService);
   const isAdmin = useLiveData(permissionService.permission.isAdmin$);
   const isOwner = useLiveData(permissionService.permission.isOwner$);
-  const [hideHeaderCreateNew, setHideHeaderCreateNew] = useState(true);
 
-  const handleEditCollection = useCallback(() => {
-    workspaceDialogService.open('collection-editor', {
-      collectionId: collection.id,
-    });
-  }, [collection, workspaceDialogService]);
+  const groupBy = useLiveData(explorerContextValue.groupBy$);
+  const orderBy = useLiveData(explorerContextValue.orderBy$);
+  const rules = useLiveData(collection.rules$);
+  const allowList = useLiveData(collection.allowList$);
+
+  useEffect(() => {
+    const subscription = collectionRulesService
+      .watch({
+        filters: rules.filters,
+        groupBy,
+        orderBy,
+        extraAllowList: allowList,
+        extraFilters: [
+          {
+            type: 'system',
+            key: 'empty-journal',
+            method: 'is',
+            value: 'false',
+          },
+          {
+            type: 'system',
+            key: 'trash',
+            method: 'is',
+            value: 'false',
+          },
+        ],
+      })
+      .subscribe({
+        next: result => {
+          explorerContextValue.groups$.next(result.groups);
+        },
+        error: error => {
+          console.error(error);
+        },
+      });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [
+    allowList,
+    collectionRulesService,
+    explorerContextValue.groups$,
+    groupBy,
+    orderBy,
+    rules.filters,
+  ]);
 
   return (
-    <>
+    <DocExplorerContext.Provider value={explorerContextValue}>
       <ViewHeader>
-        <CollectionDetailHeader
-          showCreateNew={!hideHeaderCreateNew}
-          onCreate={handleEditCollection}
-        />
+        <CollectionDetailHeader />
       </ViewHeader>
       <ViewBody>
-        <VirtualizedPageList
-          collection={collection}
-          setHideHeaderCreateNewPage={setHideHeaderCreateNew}
-          disableMultiDelete={!isAdmin && !isOwner}
-        />
+        <FlexWrapper flexDirection="column" alignItems="stretch" width="100%">
+          <CollectionListHeader collection={collection} />
+          <div className={styles.scrollArea}>
+            <DocsList disableMultiDelete={!isAdmin && !isOwner} />
+          </div>
+        </FlexWrapper>
       </ViewBody>
-    </>
+    </DocExplorerContext.Provider>
   );
 };
 

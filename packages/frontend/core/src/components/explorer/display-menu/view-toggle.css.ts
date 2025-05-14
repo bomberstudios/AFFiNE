@@ -1,20 +1,6 @@
 import { cssVarV2 } from '@toeverything/theme/v2';
 import { style } from '@vanilla-extract/css';
 
-export const header = style({
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-});
-
-export const actions = style({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 16,
-});
-
 export const viewToggle = style({
   backgroundColor: 'transparent',
 });
@@ -28,4 +14,8 @@ export const viewToggleItem = style({
       color: cssVarV2.icon.primary,
     },
   },
+});
+export const viewToggleIndicator = style({
+  backgroundColor: cssVarV2.layer.background.hoverOverlay,
+  boxShadow: 'none',
 });

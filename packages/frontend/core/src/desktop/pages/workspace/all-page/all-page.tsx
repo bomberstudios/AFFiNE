@@ -1,38 +1,20 @@
-import {
-  Button,
-  Masonry,
-  type MasonryGroup,
-  useConfirmModal,
-  usePromptModal,
-} from '@affine/component';
+import { Button, usePromptModal } from '@affine/component';
 import {
   createDocExplorerContext,
   DocExplorerContext,
 } from '@affine/core/components/explorer/context';
-import { DocListItem } from '@affine/core/components/explorer/docs-view/doc-list-item';
+import { DocsList } from '@affine/core/components/explorer/docs-view/docs-list';
 import { Filters } from '@affine/core/components/filter';
-import { ListFloatingToolbar } from '@affine/core/components/page-list/components/list-floating-toolbar';
-import { WorkspacePropertyTypes } from '@affine/core/components/workspace-property-types';
 import {
   CollectionService,
   PinnedCollectionService,
 } from '@affine/core/modules/collection';
 import { CollectionRulesService } from '@affine/core/modules/collection-rules';
 import type { FilterParams } from '@affine/core/modules/collection-rules/types';
-import { DocsService } from '@affine/core/modules/doc';
 import { FeatureFlagService } from '@affine/core/modules/feature-flag';
-import { WorkspacePropertyService } from '@affine/core/modules/workspace-property';
-import { Trans, useI18n } from '@affine/i18n';
+import { useI18n } from '@affine/i18n';
 import { useLiveData, useService } from '@toeverything/infra';
-import { cssVarV2 } from '@toeverything/theme/v2';
-import {
-  memo,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   ViewBody,
@@ -47,70 +29,9 @@ import { AllDocsHeader } from './all-page-header';
 import { MigrationAllDocsDataNotification } from './migration-data';
 import { PinnedCollections } from './pinned-collections';
 
-const GroupHeader = memo(function GroupHeader({
-  groupId,
-  collapsed,
-  itemCount,
-}: {
-  groupId: string;
-  collapsed?: boolean;
-  itemCount: number;
-}) {
-  const contextValue = useContext(DocExplorerContext);
-  const propertyService = useService(WorkspacePropertyService);
-  const allProperties = useLiveData(propertyService.sortedProperties$);
-  const groupBy = useLiveData(contextValue.groupBy$);
-
-  const groupType = groupBy?.type;
-  const groupKey = groupBy?.key;
-
-  const header = useMemo(() => {
-    if (groupType === 'property') {
-      const property = allProperties.find(p => p.id === groupKey);
-      if (!property) return null;
-
-      const config = WorkspacePropertyTypes[property.type];
-      if (!config?.groupHeader) return null;
-      return (
-        <config.groupHeader
-          groupId={groupId}
-          docCount={itemCount}
-          collapsed={!!collapsed}
-        />
-      );
-    } else {
-      return '// TODO: ' + groupType;
-    }
-  }, [allProperties, collapsed, groupId, groupKey, groupType, itemCount]);
-
-  if (!groupType) {
-    return null;
-  }
-
-  return header;
-});
-
-const calcCardHeightById = (id: string) => {
-  const max = 5;
-  const min = 1;
-  const code = id.charCodeAt(0);
-  const value = Math.floor((code % (max - min)) + min);
-  return 250 + value * 10;
-};
-
-const DocListItemComponent = memo(function DocListItemComponent({
-  itemId,
-  groupId,
-}: {
-  groupId: string;
-  itemId: string;
-}) {
-  return <DocListItem docId={itemId} groupId={groupId} />;
-});
-
 export const AllPage = () => {
   const t = useI18n();
-  const docsService = useService(DocsService);
+
   const collectionService = useService(CollectionService);
   const pinnedCollectionService = useService(PinnedCollectionService);
 
@@ -138,41 +59,10 @@ export const AllPage = () => {
 
   const [explorerContextValue] = useState(createDocExplorerContext);
 
-  const view = useLiveData(explorerContextValue.view$);
   const groupBy = useLiveData(explorerContextValue.groupBy$);
   const orderBy = useLiveData(explorerContextValue.orderBy$);
-  const groups = useLiveData(explorerContextValue.groups$);
-  const selectedDocIds = useLiveData(explorerContextValue.selectedDocIds$);
-  const collapsedGroups = useLiveData(explorerContextValue.collapsedGroups$);
-  const selectMode = useLiveData(explorerContextValue.selectMode$);
 
   const { openPromptModal } = usePromptModal();
-  const { openConfirmModal } = useConfirmModal();
-  const masonryItems = useMemo(() => {
-    const items = groups.map((group: any) => {
-      return {
-        id: group.key,
-        Component: groups.length > 1 ? GroupHeader : undefined,
-        height: groups.length > 1 ? 24 : 0,
-        className: styles.groupHeader,
-        items: group.items.map((docId: string) => {
-          return {
-            id: docId,
-            Component: DocListItemComponent,
-            height:
-              view === 'list'
-                ? 42
-                : view === 'grid'
-                  ? 280
-                  : calcCardHeightById(docId),
-            'data-view': view,
-            className: styles.docItem,
-          };
-        }),
-      } satisfies MasonryGroup;
-    });
-    return items;
-  }, [groups, view]);
 
   const collectionRulesService = useService(CollectionRulesService);
   useEffect(() => {
@@ -270,39 +160,6 @@ export const AllPage = () => {
     setTempFilters(filters);
   }, []);
 
-  const handleCloseFloatingToolbar = useCallback(() => {
-    explorerContextValue.selectMode$.next(false);
-    explorerContextValue.selectedDocIds$.next([]);
-  }, [explorerContextValue]);
-
-  const handleMultiDelete = useCallback(() => {
-    if (selectedDocIds.length === 0) {
-      return;
-    }
-
-    openConfirmModal({
-      title: t['com.affine.moveToTrash.confirmModal.title.multiple']({
-        number: selectedDocIds.length.toString(),
-      }),
-      description: t[
-        'com.affine.moveToTrash.confirmModal.description.multiple'
-      ]({
-        number: selectedDocIds.length.toString(),
-      }),
-      cancelText: t['com.affine.confirmModal.button.cancel'](),
-      confirmText: t.Delete(),
-      confirmButtonOptions: {
-        variant: 'error',
-      },
-      onConfirm: () => {
-        for (const docId of selectedDocIds) {
-          const doc = docsService.list.doc$(docId).value;
-          doc?.moveToTrash();
-        }
-      },
-    });
-  }, [docsService.list, openConfirmModal, selectedDocIds, t]);
-
   const handleSaveFilters = useCallback(() => {
     openPromptModal({
       title: t['com.affine.editCollection.saveCollection'](),
@@ -383,41 +240,9 @@ export const AllPage = () => {
             </div>
           )}
           <div className={styles.scrollArea}>
-            <Masonry
-              items={masonryItems}
-              gapY={12}
-              gapX={12}
-              groupsGap={12}
-              groupHeaderGapWithItems={12}
-              columns={view === 'list' ? 1 : undefined}
-              itemWidthMin={220}
-              preloadHeight={100}
-              itemWidth={'stretch'}
-              virtualScroll
-              collapsedGroups={collapsedGroups}
-              paddingX={useCallback(
-                (w: number) => (w > 500 ? 24 : w > 393 ? 20 : 16),
-                []
-              )}
-            />
+            <DocsList />
           </div>
         </div>
-        <ListFloatingToolbar
-          open={selectMode}
-          onDelete={handleMultiDelete}
-          onClose={handleCloseFloatingToolbar}
-          content={
-            <Trans
-              i18nKey="com.affine.page.toolbar.selected"
-              count={selectedDocIds.length}
-            >
-              <div style={{ color: cssVarV2.text.secondary }}>
-                {{ count: selectedDocIds.length } as any}
-              </div>
-              selected
-            </Trans>
-          }
-        />
       </ViewBody>
       <AllDocSidebarTabs />
     </DocExplorerContext.Provider>
