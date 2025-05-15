@@ -1,5 +1,5 @@
 import { cssVarV2 } from '@toeverything/theme/v2';
-import { createVar, style } from '@vanilla-extract/css';
+import { style } from '@vanilla-extract/css';
 
 export const header = style({
   display: 'flex',
@@ -86,14 +86,7 @@ export const tagSelectorTriggerDropdown = style({
   color: cssVarV2.icon.primary,
 });
 
-const selectorMenuPaddingX = createVar('selectorMenuPaddingX');
-const selectorMenuPaddingY = createVar('selectorMenuPaddingY');
-
 export const tagSelectorMenuRoot = style({
-  vars: {
-    [selectorMenuPaddingX]: '12px',
-    [selectorMenuPaddingY]: '12px',
-  },
   padding: 0,
   maxHeight: 400,
   display: 'flex',
@@ -101,10 +94,10 @@ export const tagSelectorMenuRoot = style({
   gap: 2,
 });
 export const tagSelectorMenuHeader = style({
-  padding: `${selectorMenuPaddingY} ${selectorMenuPaddingX} 0 ${selectorMenuPaddingX}`,
+  padding: '12px 12px 0 12px',
   display: 'flex',
   alignItems: 'center',
-  gap: 4,
+  gap: 8,
 });
 export const tagSelectorMenuSearchIcon = style({
   fontSize: 16,
@@ -118,7 +111,7 @@ export const tagSelectorMenuScrollArea = style({
   flexDirection: 'column',
 });
 export const tagSelectorMenuViewport = style({
-  padding: `1px ${selectorMenuPaddingX} ${selectorMenuPaddingY} ${selectorMenuPaddingX}`,
+  padding: '1px 8px 12px 8px',
   display: 'flex',
   flexDirection: 'column',
   gap: 2,
