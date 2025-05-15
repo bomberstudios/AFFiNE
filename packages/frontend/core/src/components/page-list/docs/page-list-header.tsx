@@ -206,6 +206,9 @@ export const CollectionPageListHeader = ({
   );
 };
 
+/**
+ * @deprecated
+ */
 export const TagPageListHeader = ({
   tag,
   workspaceId,
