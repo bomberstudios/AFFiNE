@@ -1,13 +1,12 @@
 import { type MenuProps, RadioGroup, type RadioItem } from '@affine/component';
-import { DocExplorerContext } from '@affine/core/components/explorer/context';
 import { ExplorerDisplayMenuButton } from '@affine/core/components/explorer/display-menu';
 import {
   type DocListItemView,
   DocListViewIcon,
 } from '@affine/core/components/explorer/docs-view/doc-list-item';
 import { ExplorerNavigation } from '@affine/core/components/explorer/header/navigation';
-import { useLiveData } from '@toeverything/infra';
-import { useCallback, useContext } from 'react';
+import type { ExplorerDisplayPreference } from '@affine/core/components/explorer/types';
+import { useCallback } from 'react';
 
 import * as styles from './all-page-header.css';
 
@@ -29,18 +28,13 @@ const views = [
   },
 ] satisfies RadioItem[];
 
-const ViewToggle = () => {
-  const explorerContextValue = useContext(DocExplorerContext);
-
-  const view = useLiveData(explorerContextValue.view$);
-
-  const handleViewChange = useCallback(
-    (view: DocListItemView) => {
-      explorerContextValue.view$?.next(view);
-    },
-    [explorerContextValue.view$]
-  );
-
+const ViewToggle = ({
+  view,
+  onViewChange,
+}: {
+  view: DocListItemView;
+  onViewChange: (view: DocListItemView) => void;
+}) => {
   return (
     <RadioGroup
       itemHeight={24}
@@ -48,7 +42,7 @@ const ViewToggle = () => {
       padding={0}
       items={views}
       value={view}
-      onChange={handleViewChange}
+      onChange={onViewChange}
       className={styles.viewToggle}
       borderRadius={4}
       indicatorClassName={styles.viewToggleIndicator}
@@ -64,14 +58,36 @@ const menuProps: Partial<MenuProps> = {
     sideOffset: 8,
   },
 };
-export const AllDocsHeader = () => {
+export const AllDocsHeader = ({
+  displayPreference,
+  onDisplayPreferenceChange,
+}: {
+  displayPreference: ExplorerDisplayPreference;
+  onDisplayPreferenceChange: (
+    displayPreference: ExplorerDisplayPreference
+  ) => void;
+}) => {
+  const handleViewChange = useCallback(
+    (view: DocListItemView) => {
+      onDisplayPreferenceChange({ ...displayPreference, view });
+    },
+    [displayPreference, onDisplayPreferenceChange]
+  );
+
   return (
     <div className={styles.header}>
       <ExplorerNavigation active="docs" />
 
       <div className={styles.actions}>
-        <ViewToggle />
-        <ExplorerDisplayMenuButton menuProps={menuProps} />
+        <ViewToggle
+          view={displayPreference.view ?? 'list'}
+          onViewChange={handleViewChange}
+        />
+        <ExplorerDisplayMenuButton
+          menuProps={menuProps}
+          displayPreference={displayPreference}
+          onDisplayPreferenceChange={onDisplayPreferenceChange}
+        />
       </div>
     </div>
   );
