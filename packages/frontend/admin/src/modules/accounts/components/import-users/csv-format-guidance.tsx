@@ -18,7 +18,7 @@ export const CsvFormatGuidance: FC<CsvFormatGuidanceProps> = ({
 }) => {
   return (
     <div
-      className="flex p-1.5 gap-1"
+      className="flex p-1.5 gap-1 rounded-[6px]"
       style={{
         fontSize: cssVar('fontXs'),
         color: cssVarV2('text/secondary'),

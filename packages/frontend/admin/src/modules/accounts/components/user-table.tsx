@@ -13,16 +13,16 @@ export const UserTable: React.FC<UserTableProps> = ({ users }) => {
       <table className="w-full border-collapse">
         <thead className="bg-white sticky top-0">
           <tr>
-            <th className="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Username
+            <th className="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 tracking-wider ">
+              Name
             </th>
-            <th className="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 tracking-wider">
               Email
             </th>
-            <th className="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 tracking-wider">
               Password
             </th>
-            <th className="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 tracking-wider">
               Status
             </th>
           </tr>
