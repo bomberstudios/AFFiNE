@@ -62,8 +62,8 @@ export const TagDetail = ({ tagId }: { tagId?: string }) => {
 
   useEffect(() => {
     const subscription = collectionRulesService
-      .watch(
-        [
+      .watch({
+        filters: [
           {
             type: 'system',
             key: 'empty-journal',
@@ -84,8 +84,8 @@ export const TagDetail = ({ tagId }: { tagId?: string }) => {
           },
         ],
         groupBy,
-        orderBy
-      )
+        orderBy,
+      })
       .subscribe({
         next: result => {
           explorerContextValue.groups$.next(result.groups);
