@@ -6,6 +6,7 @@ import { MailName } from '../../mails';
 
 export class MockMailer {
   send = Sinon.createStubInstance(Mailer).send.resolves(true);
+  trySend = Sinon.createStubInstance(Mailer).trySend.resolves(true);
 
   last<Mail extends MailName>(
     name: Mail
