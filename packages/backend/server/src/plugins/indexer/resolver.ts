@@ -113,6 +113,10 @@ export class IndexerResolver {
     user: UserType,
     nodes: SearchNodeWithMeta[]
   ) {
+    if (nodes.length === 0) {
+      return nodes;
+    }
+
     const isTeamWorkspace = await this.models.workspaceFeature.has(
       workspace.id,
       'team_plan_v1'
@@ -120,17 +124,17 @@ export class IndexerResolver {
     if (!isTeamWorkspace) {
       return nodes;
     }
-    const needs: SearchNodeWithMeta[] = [];
-    // TODO(@fengmk2): CLOUD-208 support batch check
-    for (const node of nodes) {
-      const canRead = await this.ac
-        .user(user.id)
-        .doc(node._source.workspaceId, node._source.docId)
-        .can('Doc.Read');
-      if (canRead) {
-        needs.push(node);
-      }
-    }
-    return needs;
+
+    const needs = await this.ac
+      .user(user.id)
+      .workspace(workspace.id)
+      .docs(
+        nodes.map(node => ({
+          node,
+          docId: node._source.docId,
+        })),
+        'Doc.Read'
+      );
+    return needs.map(node => node.node);
   }
 }

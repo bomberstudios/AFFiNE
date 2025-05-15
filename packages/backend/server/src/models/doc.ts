@@ -378,6 +378,26 @@ export class DocModel extends BaseModel {
     });
   }
 
+  async findDefaultRoles(workspaceId: string, docIds: string[]) {
+    const docs = await this.findMetas(
+      docIds.map(docId => ({
+        workspaceId,
+        docId,
+      })),
+      {
+        select: {
+          defaultRole: true,
+          public: true,
+        },
+      }
+    );
+
+    return docs.map(doc => ({
+      external: doc?.public ? DocRole.External : null,
+      workspace: doc?.defaultRole ?? DocRole.Manager,
+    }));
+  }
+
   async findAuthors(ids: { workspaceId: string; docId: string }[]) {
     const rows = await this.db.snapshot.findMany({
       where: {
@@ -401,13 +421,29 @@ export class DocModel extends BaseModel {
     );
   }
 
-  async findMetas(ids: { workspaceId: string; docId: string }[]) {
-    const rows = await this.db.workspaceDoc.findMany({
+  async findMetas<Select extends Prisma.WorkspaceDocSelect>(
+    ids: { workspaceId: string; docId: string }[],
+    options?: { select?: Select }
+  ) {
+    let select = options?.select;
+    if (select) {
+      // add workspaceId and docId to the select
+      select = {
+        ...select,
+        workspaceId: true,
+        docId: true,
+      };
+    }
+    const rows = (await this.db.workspaceDoc.findMany({
       where: {
         workspaceId: { in: ids.map(id => id.workspaceId) },
         docId: { in: ids.map(id => id.docId) },
       },
-    });
+      select,
+    })) as (Prisma.WorkspaceDocGetPayload<{ select: Select }> & {
+      workspaceId: string;
+      docId: string;
+    })[];
     const resultMap = new Map(
       rows.map(row => [`${row.workspaceId}-${row.docId}`, row])
     );
