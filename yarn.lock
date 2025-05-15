@@ -2868,7 +2868,6 @@ __metadata:
     "@blocksuite/affine-block-database": "workspace:*"
     "@blocksuite/affine-block-edgeless-text": "workspace:*"
     "@blocksuite/affine-block-embed": "workspace:*"
-    "@blocksuite/affine-block-embed-doc": "workspace:*"
     "@blocksuite/affine-block-frame": "workspace:*"
     "@blocksuite/affine-block-image": "workspace:*"
     "@blocksuite/affine-block-note": "workspace:*"

@@ -12,7 +12,6 @@
     { "path": "../database" },
     { "path": "../edgeless-text" },
     { "path": "../embed" },
-    { "path": "../embed-doc" },
     { "path": "../frame" },
     { "path": "../image" },
     { "path": "../note" },
