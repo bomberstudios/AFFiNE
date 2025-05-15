@@ -101,6 +101,7 @@ export class ImageAdapter extends BaseAdapter<Image> {
         flavour: 'affine:image',
         id: nanoid(),
         props: {
+          size: item.size,
           sourceId: blobId,
         },
         children: [],
