@@ -143,7 +143,11 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
     this.disposables.add(this.resourceController.subscribe());
     this.disposables.add(this.resourceController);
 
-    this.refreshData();
+    this.disposables.add(
+      this.model.props.sourceId$.subscribe(() => {
+        this.refreshData();
+      })
+    );
 
     if (!this.model.props.style && !this.store.readonly) {
       this.store.withoutTransact(() => {

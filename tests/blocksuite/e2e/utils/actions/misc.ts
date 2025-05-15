@@ -771,14 +771,11 @@ export async function pasteContent(
 
 export async function pasteTestImage(page: Page) {
   await page.evaluate(async () => {
-    const imageBlob = await fetch(`${location.origin}/test-card-1.png`).then(
-      response => response.blob()
-    );
-
-    const imageFile = new File([imageBlob], 'test-card-1.png', {
+    const resp = await fetch(`${location.origin}/test-card-1.png`);
+    const blob = await resp.blob();
+    const file = new File([blob], 'test-card-1.png', {
       type: 'image/png',
     });
-
     const e = new ClipboardEvent('paste', {
       clipboardData: new DataTransfer(),
     });
@@ -788,7 +785,7 @@ export async function pasteTestImage(page: Page) {
       value: document,
     });
 
-    e.clipboardData?.items.add(imageFile);
+    e.clipboardData?.items.add(file);
     document.dispatchEvent(e);
   });
   await waitNextFrame(page);

@@ -19,7 +19,7 @@ import { matchModels } from '../../utils';
 
 export const replaceIdMiddleware =
   (idGenerator: () => string): TransformerMiddleware =>
-  ({ slots, docCRUD }) => {
+  ({ slots, docCRUD, assetsManager }) => {
     const idMap = new Map<string, string>();
 
     // After Import
@@ -168,6 +168,16 @@ export const replaceIdMiddleware =
           idMap.set(original, newId);
         }
         snapshot.id = newId;
+
+        // Should be re-paired.
+        if (['affine:attachment', 'affine:image'].includes(snapshot.flavour)) {
+          if (!assetsManager.uploadingAssetsMap.has(original)) return;
+
+          const data = assetsManager.uploadingAssetsMap.get(original)!;
+          assetsManager.uploadingAssetsMap.set(newId, data);
+          assetsManager.uploadingAssetsMap.delete(original);
+          return;
+        }
 
         if (snapshot.flavour === 'affine:surface') {
           // Generate new IDs for images and frames in advance.
