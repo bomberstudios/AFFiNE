@@ -288,6 +288,15 @@ export class LicenseService {
       return;
     }
 
+    if (license.variant === SubscriptionVariant.Onetime) {
+      this.event.emit('workspace.members.allocateSeats', {
+        workspaceId,
+        quantity: license.quantity,
+      });
+
+      return;
+    }
+
     const count = await this.models.workspaceUser.chargedCount(workspaceId);
     await this.fetchAffinePro(`/api/team/licenses/${license.key}/seats`, {
       method: 'POST',

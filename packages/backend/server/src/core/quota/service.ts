@@ -144,8 +144,7 @@ export class QuotaService {
       : await this.getWorkspaceStorageUsage(workspaceId);
     const memberCount =
       await this.models.workspaceUser.chargedCount(workspaceId);
-    const overcapacityMemberCount =
-      await this.models.workspaceUser.insufficientSeatMemberCount(workspaceId);
+    const overcapacityMemberCount = memberCount - quota.memberLimit;
 
     return {
       ...quota,
