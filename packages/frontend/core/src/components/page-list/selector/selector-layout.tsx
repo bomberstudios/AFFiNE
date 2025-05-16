@@ -50,6 +50,7 @@ export const SelectorLayout = ({
           className={styles.search}
           placeholder={searchPlaceholder}
           onChange={onSearchChange}
+          debounce={200}
         />
       </header>
 
