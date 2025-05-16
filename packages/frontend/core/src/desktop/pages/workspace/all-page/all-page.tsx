@@ -13,6 +13,7 @@ import { DocListItem } from '@affine/core/components/explorer/docs-view/doc-list
 import type { ExplorerDisplayPreference } from '@affine/core/components/explorer/types';
 import { Filters } from '@affine/core/components/filter';
 import { ListFloatingToolbar } from '@affine/core/components/page-list/components/list-floating-toolbar';
+import { SystemPropertyTypes } from '@affine/core/components/system-property-types';
 import { WorkspacePropertyTypes } from '@affine/core/components/workspace-property-types';
 import {
   CollectionService,
@@ -67,7 +68,19 @@ const GroupHeader = memo(function GroupHeader({
   const groupKey = groupBy?.key;
 
   const header = useMemo(() => {
-    if (groupType === 'property') {
+    if (groupType === 'system') {
+      const property = groupKey && SystemPropertyTypes[groupKey];
+      if (!property) return null;
+      const GroupHeader = property.groupHeader;
+      if (!GroupHeader) return null;
+      return (
+        <GroupHeader
+          groupId={groupId}
+          docCount={itemCount}
+          collapsed={!!collapsed}
+        />
+      );
+    } else if (groupType === 'property') {
       const property = allProperties.find(p => p.id === groupKey);
       if (!property) return null;
 
@@ -176,17 +189,6 @@ export const AllPage = () => {
     createDocExplorerContext(initialState)
   );
 
-  const allDocsStateSave = useMemo(() => {
-    return {
-      ...explorerContextValue.displayPreference$.value,
-      selectedCollectionId,
-    };
-  }, [explorerContextValue, selectedCollectionId]);
-
-  useEffect(() => {
-    workspaceLocalState.set('allDocsDisplayPreference', allDocsStateSave);
-  }, [allDocsStateSave, workspaceLocalState]);
-
   const view = useLiveData(explorerContextValue.view$) ?? 'list';
   const groupBy = useLiveData(explorerContextValue.groupBy$);
   const orderBy = useLiveData(explorerContextValue.orderBy$);
@@ -197,6 +199,17 @@ export const AllPage = () => {
   const displayPreference = useLiveData(
     explorerContextValue.displayPreference$
   );
+
+  const allDocsStateSave = useMemo(() => {
+    return {
+      ...displayPreference,
+      selectedCollectionId,
+    };
+  }, [displayPreference, selectedCollectionId]);
+
+  useEffect(() => {
+    workspaceLocalState.set('allDocsDisplayPreference', allDocsStateSave);
+  }, [allDocsStateSave, workspaceLocalState]);
 
   const { openPromptModal } = usePromptModal();
   const { openConfirmModal } = useConfirmModal();

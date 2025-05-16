@@ -5,6 +5,7 @@ import { useI18n } from '@affine/i18n';
 import { DoneIcon } from '@blocksuite/icons/rc';
 import { useLiveData, useService } from '@toeverything/infra';
 import { cssVarV2 } from '@toeverything/theme/v2';
+import { useMemo } from 'react';
 
 import { WorkspacePropertyName } from '../../properties';
 import {
@@ -15,6 +16,7 @@ import {
   isSupportedWorkspacePropertyType,
   WorkspacePropertyTypes,
 } from '../../workspace-property-types';
+import { generateExplorerPropertyList } from '../properties';
 
 const PropertyGroupByName = ({ groupBy }: { groupBy: GroupByParams }) => {
   const workspacePropertyService = useService(WorkspacePropertyService);
@@ -48,37 +50,73 @@ export const GroupByList = ({
   groupBy?: GroupByParams;
   onChange?: (next: GroupByParams) => void;
 }) => {
+  const t = useI18n();
   const workspacePropertyService = useService(WorkspacePropertyService);
-  const propertyList = useLiveData(workspacePropertyService.properties$);
+  const propertyList = useLiveData(workspacePropertyService.sortedProperties$);
+  const explorerPropertyList = useMemo(() => {
+    return generateExplorerPropertyList(propertyList);
+  }, [propertyList]);
 
   return (
     <>
-      {propertyList.map(v => {
-        const allowInGroupBy = isSupportedWorkspacePropertyType(v.type)
-          ? WorkspacePropertyTypes[v.type].allowInGroupBy
-          : false;
-        if (!allowInGroupBy) {
-          return null;
+      {explorerPropertyList.map(({ systemProperty, workspaceProperty }) => {
+        if (systemProperty) {
+          const allowInGroupBy =
+            'allowInGroupBy' in systemProperty && systemProperty.allowInGroupBy;
+          if (!allowInGroupBy) {
+            return null;
+          }
+          return (
+            <MenuItem
+              key={systemProperty.type}
+              onClick={e => {
+                e.preventDefault();
+                onChange?.({
+                  type: 'system',
+                  key: systemProperty.type,
+                });
+              }}
+              suffixIcon={
+                groupBy?.type === 'system' &&
+                groupBy?.key === systemProperty.type ? (
+                  <DoneIcon style={{ color: cssVarV2('icon/activated') }} />
+                ) : null
+              }
+            >
+              {t.t(systemProperty.name)}
+            </MenuItem>
+          );
+        } else if (workspaceProperty?.type) {
+          const allowInGroupBy = isSupportedWorkspacePropertyType(
+            workspaceProperty.type
+          )
+            ? WorkspacePropertyTypes[workspaceProperty.type].allowInGroupBy
+            : false;
+          if (!allowInGroupBy) {
+            return null;
+          }
+          return (
+            <MenuItem
+              key={workspaceProperty.id}
+              onClick={e => {
+                e.preventDefault();
+                onChange?.({
+                  type: 'property',
+                  key: workspaceProperty.id,
+                });
+              }}
+              suffixIcon={
+                groupBy?.type === 'property' &&
+                groupBy?.key === workspaceProperty.id ? (
+                  <DoneIcon style={{ color: cssVarV2('icon/activated') }} />
+                ) : null
+              }
+            >
+              <WorkspacePropertyName propertyInfo={workspaceProperty} />
+            </MenuItem>
+          );
         }
-        return (
-          <MenuItem
-            key={v.id}
-            onClick={e => {
-              e.preventDefault();
-              onChange?.({
-                type: 'property',
-                key: v.id,
-              });
-            }}
-            suffixIcon={
-              groupBy?.type === 'property' && groupBy?.key === v.id ? (
-                <DoneIcon style={{ color: cssVarV2('icon/activated') }} />
-              ) : null
-            }
-          >
-            <WorkspacePropertyName propertyInfo={v} />
-          </MenuItem>
-        );
+        return null;
       })}
     </>
   );
