@@ -1,5 +1,5 @@
 import { Skeleton } from '@affine/component';
-import { AttachmentViewer } from '@affine/core/blocksuite/attachment-viewer';
+import { AttachmentViewerView } from '@affine/core/blocksuite/attachment-viewer';
 import { type Doc, DocsService } from '@affine/core/modules/doc';
 import { type AttachmentBlockModel } from '@blocksuite/affine/model';
 import { FrameworkScope, useLiveData, useService } from '@toeverything/infra';
@@ -71,7 +71,7 @@ export const AttachmentPage = ({
         <ViewIcon
           icon={model.props.type.endsWith('pdf') ? 'pdf' : 'attachment'}
         />
-        <AttachmentViewer model={model} />
+        <AttachmentViewerView model={model} />
       </FrameworkScope>
     );
   }

@@ -39,6 +39,7 @@ function calculatePageNum(el: HTMLElement, pageCount: number) {
   const cursor = Math.min(index, pageCount - 1);
   return cursor;
 }
+
 export interface PDFViewerInnerProps {
   pdf: PDF;
   state: Extract<PDFRendererState, { status: PDFStatus.Opened }>;

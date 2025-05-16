@@ -142,12 +142,13 @@ interface PageRendererInnerProps {
 const PageRendererInner = forwardRef<HTMLCanvasElement, PageRendererInnerProps>(
   ({ img, err }, ref) => {
     if (img) {
+      const { width, height } = img;
       return (
         <PDFPageCanvas
           ref={ref}
           style={{
-            height: img.height / 2,
-            aspectRatio: `${img.width} / ${img.height}`,
+            height: height / 2,
+            aspectRatio: `${width} / ${height}`,
           }}
         />
       );

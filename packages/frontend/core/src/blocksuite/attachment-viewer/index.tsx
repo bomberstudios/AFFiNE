@@ -7,7 +7,7 @@ import { buildAttachmentProps } from './utils';
 import { Titlebar } from './viewer';
 import * as styles from './viewer.css';
 
-// In Peek view
+// Peek view
 export const AttachmentViewer = ({ model }: AttachmentViewerProps) => {
   const props = buildAttachmentProps(model);
 
@@ -19,7 +19,7 @@ export const AttachmentViewer = ({ model }: AttachmentViewerProps) => {
   );
 };
 
-// In View container
+// Split view or standalone page
 export const AttachmentViewerView = ({ model }: AttachmentViewerProps) => {
   const props = buildAttachmentProps(model);
 
