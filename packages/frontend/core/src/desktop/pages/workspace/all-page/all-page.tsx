@@ -152,8 +152,8 @@ export const AllPage = () => {
     const items = groups.map((group: any) => {
       return {
         id: group.key,
-        Component: groups.length > 1 ? GroupHeader : undefined,
-        height: groups.length > 1 ? 24 : 0,
+        Component: groupBy ? GroupHeader : undefined,
+        height: groupBy ? 24 : 0,
         className: styles.groupHeader,
         items: group.items.map((docId: string) => {
           return {
@@ -172,7 +172,7 @@ export const AllPage = () => {
       } satisfies MasonryGroup;
     });
     return items;
-  }, [groups, view]);
+  }, [groupBy, groups, view]);
 
   const collectionRulesService = useService(CollectionRulesService);
   useEffect(() => {
