@@ -2,7 +2,7 @@ import {
   createDocExplorerContext,
   DocExplorerContext,
 } from '@affine/core/components/explorer/context';
-import { DocsList } from '@affine/core/components/explorer/docs-view/docs-list';
+import { DocsExplorer } from '@affine/core/components/explorer/docs-view/docs-list';
 import { CollectionRulesService } from '@affine/core/modules/collection-rules';
 import { GlobalContextService } from '@affine/core/modules/global-context';
 import { WorkspacePermissionService } from '@affine/core/modules/permissions';
@@ -123,7 +123,7 @@ export const TagDetail = ({ tagId }: { tagId?: string }) => {
             {isEmpty ? (
               <EmptyPageList type="all" tagId={tagId} />
             ) : (
-              <DocsList disableMultiDelete={!isAdmin && !isOwner} />
+              <DocsExplorer disableMultiDelete={!isAdmin && !isOwner} />
             )}
           </div>
         </div>
