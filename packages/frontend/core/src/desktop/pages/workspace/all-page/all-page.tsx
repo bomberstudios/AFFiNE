@@ -3,7 +3,7 @@ import {
   createDocExplorerContext,
   DocExplorerContext,
 } from '@affine/core/components/explorer/context';
-import { DocsList } from '@affine/core/components/explorer/docs-view/docs-list';
+import { DocsExplorer } from '@affine/core/components/explorer/docs-view/docs-list';
 import { Filters } from '@affine/core/components/filter';
 import {
   CollectionService,
@@ -240,7 +240,7 @@ export const AllPage = () => {
             </div>
           )}
           <div className={styles.scrollArea}>
-            <DocsList />
+            <DocsExplorer />
           </div>
         </div>
       </ViewBody>

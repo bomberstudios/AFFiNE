@@ -57,6 +57,9 @@ const GroupHeader = memo(function GroupHeader({
 });
 
 const calcCardHeightById = (id: string) => {
+  if (!id) {
+    return 250;
+  }
   const max = 5;
   const min = 1;
   const code = id.charCodeAt(0);
@@ -74,7 +77,7 @@ const DocListItemComponent = memo(function DocListItemComponent({
   return <DocListItem docId={itemId} groupId={groupId} />;
 });
 
-export const DocsList = ({
+export const DocsExplorer = ({
   className,
   disableMultiDelete,
 }: {
@@ -148,6 +151,7 @@ export const DocsList = ({
         variant: 'error',
       },
       onConfirm: () => {
+        const selectedDocIds = contextValue.selectedDocIds$.value;
         for (const docId of selectedDocIds) {
           const doc = docsService.list.doc$(docId).value;
           doc?.moveToTrash();
@@ -155,11 +159,12 @@ export const DocsList = ({
       },
     });
   }, [
+    contextValue.selectedDocIds$,
     disableMultiDelete,
     docsService.list,
     handleCloseFloatingToolbar,
     openConfirmModal,
-    selectedDocIds,
+    selectedDocIds.length,
     t,
   ]);
 

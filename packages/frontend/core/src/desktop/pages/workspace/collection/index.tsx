@@ -4,7 +4,7 @@ import {
   createDocExplorerContext,
   DocExplorerContext,
 } from '@affine/core/components/explorer/context';
-import { DocsList } from '@affine/core/components/explorer/docs-view/docs-list';
+import { DocsExplorer } from '@affine/core/components/explorer/docs-view/docs-list';
 import {
   type Collection,
   CollectionService,
@@ -101,7 +101,7 @@ export const CollectionDetail = ({
         <FlexWrapper flexDirection="column" alignItems="stretch" width="100%">
           <CollectionListHeader collection={collection} />
           <div className={styles.scrollArea}>
-            <DocsList disableMultiDelete={!isAdmin && !isOwner} />
+            <DocsExplorer disableMultiDelete={!isAdmin && !isOwner} />
           </div>
         </FlexWrapper>
       </ViewBody>
