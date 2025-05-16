@@ -6,6 +6,9 @@ import type { LinkToolbarEvents } from './link.js';
 import type { NoteEvents } from './note.js';
 import type { SlashMenuEvents } from './slash-menu.js';
 import type {
+  AttachmentReloadedEvent,
+  AttachmentReloadedEventInToolbar,
+  AttachmentUpgradedEvent,
   AttachmentUploadedEvent,
   BlockCreationEvent,
   DocCreatedEvent,
@@ -31,6 +34,10 @@ export type TelemetryEventMap = OutDatabaseAllEvents &
     CanvasElementUpdated: ElementUpdatedEvent;
     EdgelessElementLocked: ElementLockEvent;
     ExpandedAndCollapsed: MindMapCollapseEvent;
+    AttachmentReloadedEvent:
+      | AttachmentReloadedEvent
+      | AttachmentReloadedEventInToolbar;
+    AttachmentUpgradedEvent: AttachmentUpgradedEvent;
     AttachmentUploadedEvent: AttachmentUploadedEvent;
     BlockCreated: BlockCreationEvent;
     EdgelessToolPicked: EdgelessToolPickedEvent;
