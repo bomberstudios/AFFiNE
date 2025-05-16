@@ -1,8 +1,9 @@
+import { RELATIVE_ROUTES } from '@affine/routes';
 import type { RouteObject } from 'react-router';
 
 export const workbenchRoutes = [
   {
-    path: '/all',
+    path: RELATIVE_ROUTES.workspace.all,
     lazy: () => import('./pages/workspace/all-page/all-page'),
   },
   {
