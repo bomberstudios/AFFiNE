@@ -85,6 +85,12 @@ export class WorkspaceAccessController extends AccessController<'ws'> {
   }
 
   async getDocRoles(payload: Resource<'ws'>, docIds: string[]) {
+    const docRoles: (DocRole | null)[] = [];
+
+    if (docIds.length === 0) {
+      return docRoles;
+    }
+
     const workspaceRole = await this.getRole(payload);
 
     const userRoles = await this.models.docUser.findMany(
@@ -98,16 +104,17 @@ export class WorkspaceAccessController extends AccessController<'ws'> {
       const userRole = userRolesMap.get(docId);
       return (userRole?.type ?? null) === null;
     });
-    const defaultDocRoles = await this.getDocDefaultRoles(
-      payload,
-      noUserRoleDocIds,
-      workspaceRole
-    );
+    const defaultDocRoles =
+      noUserRoleDocIds.length > 0
+        ? await this.getDocDefaultRoles(
+            payload,
+            noUserRoleDocIds,
+            workspaceRole
+          )
+        : [];
     const defaultDocRolesMap = new Map(
       defaultDocRoles.map((role, index) => [noUserRoleDocIds[index], role])
     );
-
-    const docRoles: (DocRole | null)[] = [];
 
     for (const docId of docIds) {
       const userRole = userRolesMap.get(docId);
@@ -136,12 +143,16 @@ export class WorkspaceAccessController extends AccessController<'ws'> {
     docIds: string[],
     workspaceRole: WorkspaceRole | null
   ) {
+    const fallbackDocRoles: (DocRole | null)[] = [];
+
+    if (docIds.length === 0) {
+      return fallbackDocRoles;
+    }
+
     const defaultDocRoles = await this.models.doc.findDefaultRoles(
       payload.workspaceId,
       docIds
     );
-
-    const fallbackDocRoles: (DocRole | null)[] = [];
 
     for (const defaultDocRole of defaultDocRoles) {
       let docRole: DocRole | null;
